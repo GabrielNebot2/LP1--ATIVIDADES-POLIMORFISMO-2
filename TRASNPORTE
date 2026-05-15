@@ -1,0 +1,48 @@
+#include <iostream>
+using namespace std;
+
+class Veiculo {
+public:
+    virtual void mover() {
+        cout << "Veiculo em movimento" << endl;
+    }
+
+    virtual ~Veiculo() {}
+};
+
+class VeiculoCombustao : public Veiculo {
+public:
+    virtual void abastecer() {
+        cout << "Veiculo abastecido com combustivel" << endl;
+    }
+};
+
+class Carro : public VeiculoCombustao {
+};
+
+class Moto : public VeiculoCombustao {
+};
+
+class CarroEletrico : public Veiculo {
+public:
+    void recarregar() {
+        cout << "Carro eletrico recarregado" << endl;
+    }
+};
+
+void prepararViagem(VeiculoCombustao& veiculo) {
+    veiculo.abastecer();
+}
+
+int main() {
+    Carro carro;
+    Moto moto;
+    CarroEletrico eletrico;
+
+    prepararViagem(carro);
+    prepararViagem(moto);
+
+    eletrico.recarregar();
+
+    return 0;
+}
