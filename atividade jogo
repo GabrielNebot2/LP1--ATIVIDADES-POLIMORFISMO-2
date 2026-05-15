@@ -1,0 +1,199 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Personagem {
+protected:
+    string nome;
+    float hp, hpMax;
+    float mp, mpMax;
+
+public:
+    Personagem(string n, float h, float m) {
+        nome = n;
+        hp = hpMax = h;
+        mp = mpMax = m;
+    }
+
+    virtual void ataqueSimples(Personagem& alvo) = 0;
+    virtual void ataqueEspecial(Personagem& alvo) = 0;
+
+    void recuperar() {
+        hp += hpMax * 0.1;
+
+        if (hp > hpMax)
+            hp = hpMax;
+
+        mp += mpMax * 0.1;
+
+        if (mp > mpMax)
+            mp = mpMax;
+    }
+
+    bool vivo() {
+        return hp > 0;
+    }
+
+    void receberDano(float dano) {
+        hp -= dano;
+
+        if (hp < 0)
+            hp = 0;
+    }
+
+    float getMP() {
+        return mp;
+    }
+
+    string getNome() {
+        return nome;
+    }
+
+    void mostrarStatus() {
+        cout << nome << " | HP: " << hp << "/" << hpMax
+             << " | MP: " << mp << "/" << mpMax << endl;
+    }
+};
+
+class Guerreiro : public Personagem {
+public:
+    Guerreiro(string n) : Personagem(n, 200, 100) {}
+
+    void ataqueSimples(Personagem& alvo) override {
+        cout << nome << " Atacou com espada basica!\n";
+        alvo.receberDano(20);
+    }
+
+    void ataqueEspecial(Personagem& alvo) override {
+        float custo = mpMax * 0.15;
+
+        if (mp >= custo) {
+            mp -= custo;
+            cout << nome << " Usou ESPADA DO JUÍZO FINAL!\n";
+            alvo.receberDano(40);
+        } else {
+            cout << "MP insuficiente!\n";
+        }
+    }
+};
+
+class Mago : public Personagem {
+public:
+    Mago(string n) : Personagem(n, 150, 200) {}
+
+    void ataqueSimples(Personagem& alvo) override {
+        cout << nome << " Lançou Magia De luz!\n";
+        alvo.receberDano(18);
+    }
+
+    void ataqueEspecial(Personagem& alvo) override {
+        float custo = mpMax * 0.15;
+
+        if (mp >= custo) {
+            mp -= custo;
+            cout << nome << " Usou Magia Suprema dos 7 mundos!\n";
+            alvo.receberDano(45);
+        } else {
+            cout << "MP insuficiente!\n";
+        }
+    }
+};
+
+class Arqueiro : public Personagem {
+public:
+    Arqueiro(string n) : Personagem(n, 170, 120) {}
+
+    void ataqueSimples(Personagem& alvo) override {
+        cout << nome << " Lançou Flecha!\n";
+        alvo.receberDano(22);
+    }
+
+    void ataqueEspecial(Personagem& alvo) override {
+        float custo = mpMax * 0.15;
+
+        if (mp >= custo) {
+            mp -= custo;
+            cout << nome << " Usou Flecha DIMENSIONAL!\n";
+            alvo.receberDano(38);
+        } else {
+            cout << "MP insuficiente!\n";
+        }
+    }
+};
+
+int main() {
+    Personagem* p1;
+    Personagem* p2;
+
+    int escolha;
+
+    cout << "Escolha o personagem do Jogador 1\n";
+    cout << "1 - Guerreiro\n2 - Mago\n3 - Arqueiro\n";
+    cin >> escolha;
+
+    if (escolha == 1)
+        p1 = new Guerreiro("Jogador 1");
+    else if (escolha == 2)
+        p1 = new Mago("Jogador 1");
+    else
+        p1 = new Arqueiro("Jogador 1");
+
+    cout << "\nEscolha o personagem do Jogador 2\n";
+    cout << "1 - Guerreiro\n2 - Mago\n3 - Arqueiro\n";
+    cin >> escolha;
+
+    if (escolha == 1)
+        p2 = new Guerreiro("Jogador 2");
+    else if (escolha == 2)
+        p2 = new Mago("Jogador 2");
+    else
+        p2 = new Arqueiro("Jogador 2");
+
+    int turno = 1;
+
+    while (p1->vivo() && p2->vivo()) {
+        cout << "\n===== TURNO " << turno << " =====\n";
+
+        p1->recuperar();
+        p2->recuperar();
+
+        p1->mostrarStatus();
+        p2->mostrarStatus();
+
+        cout << "\nVez do " << p1->getNome() << endl;
+        cout << "1 - Ataque Simples\n2 - Ataque Especial\n";
+        cin >> escolha;
+
+        if (escolha == 1)
+            p1->ataqueSimples(*p2);
+        else
+            p1->ataqueEspecial(*p2);
+
+        if (!p2->vivo())
+            break;
+
+        cout << "\nVez do " << p2->getNome() << endl;
+        cout << "1 - Ataque Simples\n2 - Ataque Especial\n";
+        cin >> escolha;
+
+        if (escolha == 1)
+            p2->ataqueSimples(*p1);
+        else
+            p2->ataqueEspecial(*p1);
+
+        turno++;
+    }
+
+    cout << endl;
+
+    if (p1->vivo())
+        cout << p1->getNome() << " venceu!\n";
+    else
+        cout << p2->getNome() << " venceu!\n";
+
+    delete p1;
+    delete p2;
+
+    return 0;
+}
