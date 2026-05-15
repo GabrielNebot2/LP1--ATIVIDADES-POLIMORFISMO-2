@@ -1,0 +1,7 @@
+O código quebra o princípio da Substituição de Liskov porque o CarroEletrico herda da classe Carro, 
+mas não consegue usar o método abastecer() da forma esperada, já que carros elétricos não usam gasolina. 
+Assim, quando o sistema tenta tratar um CarroEletrico como um Carro comum, acontece um erro, mostrando 
+que a herança foi usada de forma errada. Para resolver isso, a hierarquia precisa ser refeita separando 
+os veículos que usam combustível dos elétricos, deixando o método abastecer() apenas para os veículos a 
+combustão e criando um método próprio de recarga para os elétricos.Assim, cada classe possui apenas 
+comportamentos que realmente fazem sentido para ela.
